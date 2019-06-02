@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundcolor"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_navigation" />
+
+    <!--<SeekBar-->
+        <!--android:id="@+id/seekBar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_above="@id/currSong"-->
+        <!--android:layout_weight="0"-->
+        <!--android:background="?attr/cardbackground" />-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/currSong"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_above="@id/bottom_navigation"-->
+        <!--android:layout_marginBottom="1dp"-->
+        <!--android:paddingBottom="5dp"-->
+        <!--android:background="?attr/cardbackground"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="horizontal">-->
+
+
+        <!--<TextView-->
+            <!--android:id="@+id/tvCurrSongName"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:ellipsize="marquee"-->
+            <!--android:gravity="center|right"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Shape of you"-->
+            <!--android:textColor="?attr/selectedtextcolor"-->
+            <!--android:textSize="13sp" />-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center"-->
+            <!--android:text=" - "-->
+            <!--android:textColor="?attr/textcolor"-->
+            <!--android:textSize="20sp" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/tvCurrSongArtist"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:ellipsize="marquee"-->
+            <!--android:gravity="center|left"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Ed Sheeran"-->
+            <!--android:textColor="?attr/textcolor"-->
+            <!--android:textSize="13sp" />-->
+
+    <!--</LinearLayout>-->
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/cardbackground"
+        app:itemIconTint="@drawable/bottom_nav_icon_color_selector"
+        app:itemTextAppearanceInactive="?attr/textcolor"
+        app:itemTextColor="@drawable/bottom_nav_icon_color_selector"
+        app:menu="@menu/bottom_navigation" />
+</RelativeLayout>
