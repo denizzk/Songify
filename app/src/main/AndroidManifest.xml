@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,12 @@
             </intent-filter>
         </activity>
         <service android:name="com.dkarakaya.songify.MusicService" />
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

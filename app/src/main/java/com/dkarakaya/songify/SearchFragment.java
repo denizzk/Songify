@@ -148,11 +148,8 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta vMeta) {
-                System.out.println("111111111111: " + videoTitle);
-                System.out.println("111111111111: " + youtubeLink);
                 if (ytFiles != null) {
                     // Iterate over itags
-                    System.out.println("22222222222222222222222");
                     for (int i = 0, itag; i < ytFiles.size(); i++) {
                         itag = ytFiles.keyAt(i);
                         // ytFile represents one file with its url and meta data
@@ -160,11 +157,9 @@ public class SearchFragment extends Fragment {
                         System.out.println("ITAG: " + itag);
                         // Just add videos in a decent format => height -1 = audio
                         if (ytFile.getFormat().getHeight() == -1) {
-//                            addButtonToMainLayout(vMeta.getTitle(), ytFile);
-                            System.out.println("3333333333333333333333333333");
                             String filename;
-                            if (videoTitle.length() > 30) {
-                                filename = videoTitle.substring(0, 30) + "." + ytFile.getFormat()
+                            if (videoTitle.length() > 55) {
+                                filename = videoTitle.substring(0, 55) + "." + ytFile.getFormat()
                                         .getExt();
                             } else {
                                 filename = videoTitle + "." + ytFile.getFormat().getExt();
@@ -189,8 +184,6 @@ public class SearchFragment extends Fragment {
                 .VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + "/music",
                 fileName);
-        System.out.println("DownloadManager manager = (DownloadManager) getActivity()" +
-                ".getSystemService(Context.DOWNLOAD_SERVICE);");
         DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context
                 .DOWNLOAD_SERVICE);
         manager.enqueue(request);

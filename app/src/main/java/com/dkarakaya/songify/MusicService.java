@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.IBinder;
@@ -12,6 +14,7 @@ import android.media.AudioManager;
 import android.os.Binder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
 import android.app.Notification;
@@ -30,9 +33,12 @@ public class MusicService extends Service implements
     //current position
     private int songPosn;
 
-    private SongInfo currSong;
-    private String songTitle = "";
+    private SongInfo curSong;
+    String NOTIFICATION_CHANNEL_ID = "com.dkarakaya.songify";
+    String CHANNEL_NAME = "Songify";
     private static final int NOTIFY_ID = 1;
+    NotificationManager manager;
+    MediaSessionCompat mediaSession;
 
     private final IBinder musicBind = new MusicBinder();
 
@@ -44,13 +50,27 @@ public class MusicService extends Service implements
         //create player
         player = new MediaPlayer();
 
+        mediaSession = new MediaSessionCompat(getApplication(), "mediaSession");
+
         initMusicPlayer();
+    }
+
+    public void createNotificationChannel(){
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context
+                .NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
     }
 
     @Override
     public void onDestroy() {
         stopForeground(true);
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context
+                .NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFY_ID);
     }
 
@@ -79,8 +99,7 @@ public class MusicService extends Service implements
         player.reset();
         //get song
         SongInfo playSong = songs.get(songPosn);
-        currSong = playSong;
-        songTitle = playSong.getSongTitle();
+        curSong = playSong;
         try {
             player.setDataSource(playSong.getSongUrl());
         } catch (Exception e) {
@@ -99,29 +118,31 @@ public class MusicService extends Service implements
         PendingIntent pendInt = PendingIntent.getActivity(this, 0,
                 notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        String NOTIFICATION_CHANNEL_ID = "com.dkarakaya.songify";
-        String channelName = "Songify";
-        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName,
-                NotificationManager.IMPORTANCE_NONE);
-        chan.setLightColor(Color.BLUE);
-        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-        NotificationManager manager = (NotificationManager) getSystemService(Context
-                .NOTIFICATION_SERVICE);
-        assert manager != null;
-        manager.createNotificationChannel(chan);
+        createNotificationChannel();
+
+        Bitmap artwork = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_songify);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,
                 NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder
                 .setContentIntent(pendInt)
                 .setSmallIcon(R.drawable.ic_note)
+                .setLargeIcon(artwork)
                 .setOngoing(true)
-                .setContentTitle(songTitle)
-                .setContentText(currSong.getArtistName())
+                .setContentTitle(curSong.getSongTitle())
+                .setContentText(curSong.getArtistName())
+                .addAction(R.drawable.ic_previous, "Previous", null)
+                .addAction(R.drawable.ic_pause, "Pause", null)
+                .addAction(R.drawable.ic_next, "Next", null)
+                .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(1)
+                        .setMediaSession(mediaSession.getSessionToken()))
                 .setPriority(NotificationManager.IMPORTANCE_LOW)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
         startForeground(NOTIFY_ID, notification);
+
+        MainActivity.setCurSongDetails(curSong.getSongTitle(), curSong.getArtistName());
     }
 
     public void setSong(int songIndex) {
@@ -167,7 +188,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if(player.getCurrentPosition()>0){
+        if (player.getCurrentPosition() > 0) {
             mp.reset();
             playNext();
         }
@@ -186,6 +207,9 @@ public class MusicService extends Service implements
 
     @Override
     public boolean onUnbind(Intent intent) {
+
+        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(NOTIFY_ID);
         player.stop();
         player.release();
         return false;

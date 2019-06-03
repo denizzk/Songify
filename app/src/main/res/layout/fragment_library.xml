@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/backgroundcolor">
+    android:background="?attr/backgroundcolor"
+    android:weightSum="6">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/songList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_height="0dp"
+        android:layout_weight="4.91" />
 
 </LinearLayout>

@@ -28,7 +28,7 @@ public class VideoPostAdapter extends RecyclerView.Adapter<VideoPostAdapter.Yout
 
     @Override
     public YoutubePostHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.youtube_posts,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.youtube_post,parent,false);
         YoutubePostHolder postHolder = new YoutubePostHolder(view);
         return postHolder;
     }

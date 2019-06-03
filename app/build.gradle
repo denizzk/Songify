@@ -25,6 +25,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
@@ -37,10 +38,6 @@ dependencies {
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
 
-    //jackson
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.9.8'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
     //image
     implementation 'com.squareup.picasso:picasso:2.5.2'

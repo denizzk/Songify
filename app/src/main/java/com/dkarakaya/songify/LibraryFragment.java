@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,16 +38,12 @@ import android.widget.MediaController.MediaPlayerControl;
 
 public class LibraryFragment extends Fragment implements MediaPlayerControl {
 
-    private ArrayList<SongInfo> songList = new ArrayList<>();
     RecyclerView rvSongList;
+    FrameLayout lMediaController;
+    private ArrayList<SongInfo> songList = new ArrayList<>();
 
     SongAdapter songAdapter;
-    MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler myHandler = new Handler();
-
-    private boolean isPlaying = false;
-    private int oldPos = -1;
-
 
     private MusicService musicSrv;
     private Intent playIntent;
@@ -62,6 +59,9 @@ public class LibraryFragment extends Fragment implements MediaPlayerControl {
         View v = inflater.inflate(R.layout.fragment_library, container, false);
 
         rvSongList = v.findViewById(R.id.songList);
+
+        lMediaController = getActivity().findViewById(R.id.mediaController);
+        lMediaController.setVisibility(View.GONE);
 
         controller = new MusicController(getActivity());
         controller.setAnchorView(v.findViewById(R.id.songList));
@@ -147,10 +147,11 @@ public class LibraryFragment extends Fragment implements MediaPlayerControl {
     public void songPicked(int songPos) {
         musicSrv.setSong(songPos);
         musicSrv.playSong();
-        if(playbackPaused){
+        if (playbackPaused) {
             setController();
-            playbackPaused=false;
+            playbackPaused = false;
         }
+        lMediaController.setVisibility(View.VISIBLE);
         controller.show(0);
     }
 
@@ -172,11 +173,8 @@ public class LibraryFragment extends Fragment implements MediaPlayerControl {
         controller.setMediaPlayer(this);
 
         controller.setEnabled(true);
-        FrameLayout.LayoutParams lpp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        controller.setLayoutParams(lpp);
-        controller.setPadding(50, 0, 50,0);
-        controller.setAlpha(.75f);
-        controller.bringToFront();
+        controller.setAnchorView(lMediaController);
+        controller.setAlpha(.7f);
     }
 
     @Override
@@ -186,24 +184,24 @@ public class LibraryFragment extends Fragment implements MediaPlayerControl {
 
     @Override
     public void pause() {
-        playbackPaused=true;
+        playbackPaused = true;
         musicSrv.pausePlayer();
     }
 
-    private void playNext(){
+    private void playNext() {
         musicSrv.playNext();
-        if(playbackPaused){
+        if (playbackPaused) {
             setController();
-            playbackPaused=false;
+            playbackPaused = false;
         }
         controller.show(0);
     }
 
-    private void playPrev(){
+    private void playPrev() {
         musicSrv.playPrev();
-        if(playbackPaused){
+        if (playbackPaused) {
             setController();
-            playbackPaused=false;
+            playbackPaused = false;
         }
         controller.show(0);
     }
@@ -299,8 +297,6 @@ public class LibraryFragment extends Fragment implements MediaPlayerControl {
                 do {
                     String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media
                             .TITLE));
-                    String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media
-                            .ARTIST));
                     String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media
                             .DATA));
                     String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio
@@ -309,7 +305,7 @@ public class LibraryFragment extends Fragment implements MediaPlayerControl {
                     String[] s = name.split("-");
                     if (s.length == 2)
                         name = s[1].trim();
-                    artist = s[0].trim();
+                    String artist = s[0].trim();
 
                     int d = Integer.parseInt(duration) / 1000;
                     int min = d / 60;
