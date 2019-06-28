@@ -57,6 +57,9 @@ public class MusicService extends Service implements
         IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(mNoisyReceiver, filter);
 
+        IntentFilter filterHeadphoneButton = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+        registerReceiver(mHeadphoneButton, filterHeadphoneButton);
+
         initMusicPlayer();
     }
 
@@ -79,6 +82,7 @@ public class MusicService extends Service implements
         mNotificationManager.cancel(NOTIFY_ID);
 
         unregisterReceiver(mNoisyReceiver);
+        unregisterReceiver(mHeadphoneButton);
     }
 
     public void initMusicPlayer() {
@@ -157,6 +161,17 @@ public class MusicService extends Service implements
         public void onReceive(Context context, Intent intent) {
             if( player != null && player.isPlaying() ) {
                 pausePlayer();
+            }
+        }
+    };
+
+    private BroadcastReceiver mHeadphoneButton = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if( player != null && player.isPlaying() ) {
+                pausePlayer();
+            }else if( player != null && !player.isPlaying() ){
+                go();
             }
         }
     };
