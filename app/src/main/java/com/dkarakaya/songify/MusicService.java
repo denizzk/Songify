@@ -3,8 +3,10 @@ package com.dkarakaya.songify;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -52,6 +54,9 @@ public class MusicService extends Service implements
 
         mediaSession = new MediaSessionCompat(getApplication(), "mediaSession");
 
+        IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(mNoisyReceiver, filter);
+
         initMusicPlayer();
     }
 
@@ -72,6 +77,8 @@ public class MusicService extends Service implements
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context
                 .NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFY_ID);
+
+        unregisterReceiver(mNoisyReceiver);
     }
 
     public void initMusicPlayer() {
@@ -135,7 +142,6 @@ public class MusicService extends Service implements
                 .addAction(R.drawable.ic_pause, "Pause", null)
                 .addAction(R.drawable.ic_next, "Next", null)
                 .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(1)
                         .setMediaSession(mediaSession.getSessionToken()))
                 .setPriority(NotificationManager.IMPORTANCE_LOW)
                 .setCategory(Notification.CATEGORY_SERVICE)
@@ -144,6 +150,16 @@ public class MusicService extends Service implements
 
         MainActivity.setCurSongDetails(curSong.getSongTitle(), curSong.getArtistName());
     }
+
+
+    private BroadcastReceiver mNoisyReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if( player != null && player.isPlaying() ) {
+                pausePlayer();
+            }
+        }
+    };
 
     public void setSong(int songIndex) {
         songPosn = songIndex;

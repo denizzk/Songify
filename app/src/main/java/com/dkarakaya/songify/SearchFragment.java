@@ -100,9 +100,6 @@ public class SearchFragment extends Fragment {
                 new RequestYoutubeAPI().execute();
             }
         });
-
-//        initList(mListData);
-
         return view;
     }
 
@@ -120,7 +117,7 @@ public class SearchFragment extends Fragment {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission
                 .WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 123);
             return;
         }
 //        getYoutubeDownloadUrl(youtubeLink);
