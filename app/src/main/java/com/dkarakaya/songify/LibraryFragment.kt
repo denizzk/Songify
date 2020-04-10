@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.MediaController
 import android.widget.MediaController.MediaPlayerControl
@@ -25,7 +23,7 @@ import com.dkarakaya.songify.util.MusicService.MusicBinder
 import com.dkarakaya.songify.util.REQUEST_EXTERNAL_STORAGE
 import com.dkarakaya.songify.util.verifyStoragePermissions
 
-class LibraryFragment : Fragment(), MediaPlayerControl {
+class LibraryFragment : Fragment(R.layout.fragment_library), MediaPlayerControl {
     private lateinit var recyclerView: RecyclerView
     private lateinit var playerLayout: FrameLayout
 
@@ -39,9 +37,6 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
     private var musicBound = false
     private var paused = false
     private var playbackPaused = false
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_library, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
