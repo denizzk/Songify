@@ -1,8 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundcolor"
+    android:background="?attr/backgroundColor"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp"
@@ -14,7 +13,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="Search"
-        android:textColor="?attr/selectedtextcolor"
+        android:textColor="?attr/selectedTextColor"
         android:textSize="60sp"
         android:textStyle="bold" />
 
@@ -32,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:background="?attr/selectedtextcolor"
+            android:background="?attr/selectedTextColor"
             android:hint="Artists, songs"
             android:textAlignment="center"
             android:textColor="?attr/cardbackground"
@@ -45,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".5"
-            android:background="?attr/selectedtextcolor"
+            android:background="?attr/selectedTextColor"
             android:src="@drawable/ic_search"
             android:layout_gravity="center"
             android:clickable="true"
@@ -70,7 +69,7 @@
 
         </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mList_videos"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -6,10 +6,10 @@
         <item name="colorPrimary">#212121</item>
         <item name="colorPrimaryDark">#191414</item>
         <item name="colorAccent">#1db954</item>
-        <item name="backgroundcolor">#000000</item>
+        <item name="backgroundColor">#000000</item>
         <item name="cardbackground">#303030</item>
         <item name="textcolor">#828282</item>
-        <item name="selectedtextcolor">#fcfcfc</item>
+        <item name="selectedTextColor">#fcfcfc</item>
         <item name="tintcolor">#fcfcfc</item>
         <item name="buttoncolor">#2196f3</item>
     </style>

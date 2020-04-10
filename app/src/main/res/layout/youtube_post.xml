@@ -46,7 +46,7 @@
                 android:gravity="bottom"
                 android:singleLine="true"
                 android:text="Shape of you"
-                android:textColor="?attr/selectedtextcolor"
+                android:textColor="?attr/selectedTextColor"
                 android:textSize="16sp" />
 
             <TextView
