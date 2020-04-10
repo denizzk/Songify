@@ -1,6 +1,5 @@
 package com.dkarakaya.songify
 
-import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -14,41 +13,48 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.MediaController
 import android.widget.MediaController.MediaPlayerControl
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dkarakaya.songify.MusicService.MusicBinder
+import com.dkarakaya.songify.util.REQUEST_EXTERNAL_STORAGE
+import com.dkarakaya.songify.util.verifyStoragePermissions
 
 class LibraryFragment : Fragment(), MediaPlayerControl {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var mediaController: FrameLayout
+    private lateinit var playerLayout: FrameLayout
 
-    private lateinit var musicController: MusicController
+    private lateinit var controller: MediaController
     private lateinit var musicService: MusicService
     private lateinit var songAdapter: SongAdapter
+
+    private var playIntent: Intent? = null
     private var songList: MutableList<SongInfo> = emptyList<SongInfo>().toMutableList()
 
     private var musicBound = false
     private var paused = false
     private var playbackPaused = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_library, container, false)
+        return inflater.inflate(R.layout.fragment_library, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         render(view)
-        checkUserPermission()
-        return view
+        requireActivity().verifyStoragePermissions()
+        loadSongs()
     }
 
     private fun render(view: View) {
-        val linearLayoutManager = LinearLayoutManager(requireActivity())
+        val linearLayoutManager = LinearLayoutManager(requireContext())
         recyclerView = view.findViewById(R.id.songList)
-        mediaController = view.findViewById(R.id.mediaController)
+        playerLayout = view.findViewById(R.id.mediaController)
 
         setController()
 
-        songAdapter = SongAdapter(requireActivity(), songList)
+        songAdapter = SongAdapter(requireContext(), songList)
         songAdapter.setOnItemClickListener(object : SongAdapter.OnItemClickListener {
             override fun onItemClick(view: View?, obj: SongInfo?, position: Int) {
                 try {
@@ -61,6 +67,19 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
 
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.adapter = songAdapter
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_EXTERNAL_STORAGE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    loadSongs()
+                } else {
+                    requireActivity().verifyStoragePermissions()
+                }
+                return
+            }
+        }
     }
 
     override fun onPause() {
@@ -77,8 +96,10 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
     }
 
     override fun onStop() {
-        musicController.hide()
         super.onStop()
+        controller.hide()
+        requireContext().unbindService(musicConnection)
+        requireContext().stopService(playIntent)
     }
 
     //connect to the service
@@ -99,9 +120,15 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
 
     override fun onStart() {
         super.onStart()
-        val playIntent = Intent(requireContext(), MusicService::class.java)
+        if (playIntent == null) {
+            playIntent = Intent(requireContext(), MusicService::class.java)
+        }
         requireContext().bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         requireContext().startService(playIntent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 
     private fun songPicked(songPos: Int) {
@@ -111,22 +138,22 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
             setController()
             playbackPaused = false
         }
-        mediaController.visibility = View.VISIBLE
-        musicController.show(0)
+        playerLayout.visibility = View.VISIBLE
+        controller.show(0)
     }
 
     // set the controller up
     private fun setController() {
-        musicController = MusicController(requireActivity())
+        controller = MusicController(requireContext())
 
 //        musicController.setAnchorView(recyclerView)
 //        mediaController.visibility = View.GONE
 
-        musicController.setPrevNextListeners({ playNext() }) { playPrev() }
-        musicController.setMediaPlayer(this)
-        musicController.isEnabled = true
-        musicController.setAnchorView(mediaController)
-        musicController.alpha = .7f
+        controller.setPrevNextListeners({ playNext() }) { playPrev() }
+        controller.setMediaPlayer(this)
+        controller.isEnabled = true
+        controller.setAnchorView(playerLayout)
+        controller.alpha = .7f
     }
 
     override fun start() {
@@ -144,7 +171,7 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
             setController()
             playbackPaused = false
         }
-        musicController.show(0)
+        controller.show(0)
     }
 
     private fun playPrev() {
@@ -153,7 +180,7 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
             setController()
             playbackPaused = false
         }
-        musicController.show(0)
+        controller.show(0)
     }
 
     override fun getDuration(): Int {
@@ -192,33 +219,10 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
         return 0
     }
 
-    /** */
-    private fun checkUserPermission() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 123)
-            return
-        }
-        loadSongs()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        when (requestCode) {
-            123 -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                loadSongs()
-            } else {
-                Toast.makeText(activity, "Permission Denied", Toast.LENGTH_SHORT).show()
-                checkUserPermission()
-            }
-            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
-    }
-
     private fun loadSongs() {
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val selection = "${MediaStore.Audio.Media.IS_MUSIC}!=0 AND ${MediaStore.Audio.Media.DATA} LIKE '%music%'"
-        val cursor = requireActivity().contentResolver.query(uri, null, selection, null, null)
+        val cursor = requireContext().contentResolver.query(uri, null, selection, null, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
