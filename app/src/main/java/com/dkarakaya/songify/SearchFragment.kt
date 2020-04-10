@@ -55,7 +55,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             prepareLinkFromQuery()
 
             RequestYoutubeAPI().execute()
-
         }
     }
 
@@ -140,7 +139,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             } else {
                 videoTitle + "." + ytFile.format.ext
             }
-            filename = filename.replace("[\\\\><\"|*?%:#/]".toRegex(), "")
+            filename = filename.replace("[\\\\><\"|*?%:#/&%$+!~]".toRegex(), "")
             return filename
         }
 
