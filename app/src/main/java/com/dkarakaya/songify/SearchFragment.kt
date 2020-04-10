@@ -25,6 +25,9 @@ import androidx.recyclerview.widget.RecyclerView
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
+import com.dkarakaya.songify.adapter.VideoPostAdapter
+import com.dkarakaya.songify.model.YoutubeDataModel
+import com.dkarakaya.songify.util.OnItemClickListener
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient

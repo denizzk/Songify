@@ -1,4 +1,4 @@
-package com.dkarakaya.songify
+package com.dkarakaya.songify.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.dkarakaya.songify.SongAdapter.SongHolder
+import com.dkarakaya.songify.R
+import com.dkarakaya.songify.adapter.SongAdapter.SongHolder
+import com.dkarakaya.songify.model.SongInfo
 
 class SongAdapter(private val context: Context, private val _songs: MutableList<SongInfo>) : RecyclerView.Adapter<SongHolder>() {
     private var mOnItemClickListener: OnItemClickListener? = null

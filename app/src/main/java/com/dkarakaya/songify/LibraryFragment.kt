@@ -18,7 +18,10 @@ import android.widget.MediaController.MediaPlayerControl
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.dkarakaya.songify.MusicService.MusicBinder
+import com.dkarakaya.songify.adapter.SongAdapter
+import com.dkarakaya.songify.model.SongInfo
+import com.dkarakaya.songify.util.MusicService
+import com.dkarakaya.songify.util.MusicService.MusicBinder
 import com.dkarakaya.songify.util.REQUEST_EXTERNAL_STORAGE
 import com.dkarakaya.songify.util.verifyStoragePermissions
 
@@ -98,8 +101,6 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
     override fun onStop() {
         super.onStop()
         controller.hide()
-        requireContext().unbindService(musicConnection)
-        requireContext().stopService(playIntent)
     }
 
     //connect to the service
@@ -127,10 +128,6 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
         requireContext().startService(playIntent)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     private fun songPicked(songPos: Int) {
         musicService.setSong(songPos)
         musicService.playSong()
@@ -144,11 +141,7 @@ class LibraryFragment : Fragment(), MediaPlayerControl {
 
     // set the controller up
     private fun setController() {
-        controller = MusicController(requireContext())
-
-//        musicController.setAnchorView(recyclerView)
-//        mediaController.visibility = View.GONE
-
+        controller = MediaController(requireContext())
         controller.setPrevNextListeners({ playNext() }) { playPrev() }
         controller.setMediaPlayer(this)
         controller.isEnabled = true

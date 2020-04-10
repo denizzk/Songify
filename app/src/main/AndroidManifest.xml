@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.dkarakaya.songify.MusicService" />
+        <service android:name="com.dkarakaya.songify.util.MusicService" />
 
         <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
             <intent-filter>

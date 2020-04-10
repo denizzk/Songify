@@ -1,4 +1,4 @@
-package com.dkarakaya.songify
+package com.dkarakaya.songify.model
 
 data class SongInfo(var songTitle: String? = null,
                     var artistName: String? = null,

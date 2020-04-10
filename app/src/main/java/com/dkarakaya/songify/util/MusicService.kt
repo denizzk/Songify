@@ -1,4 +1,4 @@
-package com.dkarakaya.songify
+package com.dkarakaya.songify.util
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -21,7 +21,10 @@ import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.dkarakaya.songify.MainActivity
 import com.dkarakaya.songify.MainActivity.Companion.setCurSongDetails
+import com.dkarakaya.songify.R
+import com.dkarakaya.songify.model.SongInfo
 
 class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener, OnCompletionListener {
     private var notificationManager: NotificationManager? = null

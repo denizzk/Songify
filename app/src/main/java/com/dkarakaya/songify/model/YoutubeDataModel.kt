@@ -1,4 +1,4 @@
-package com.dkarakaya.songify
+package com.dkarakaya.songify.model
 
 import android.os.Parcel
 import android.os.Parcelable

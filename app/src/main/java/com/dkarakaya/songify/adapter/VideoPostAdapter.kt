@@ -1,4 +1,4 @@
-package com.dkarakaya.songify
+package com.dkarakaya.songify.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.dkarakaya.songify.VideoPostAdapter.YoutubePostHolder
+import com.dkarakaya.songify.R
+import com.dkarakaya.songify.adapter.VideoPostAdapter.YoutubePostHolder
+import com.dkarakaya.songify.model.YoutubeDataModel
+import com.dkarakaya.songify.util.OnItemClickListener
 import com.squareup.picasso.Picasso
 import java.util.*
 
