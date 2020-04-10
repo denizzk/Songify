@@ -10,9 +10,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.util.SparseArray
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -28,6 +26,7 @@ import at.huber.youtubeExtractor.YtFile
 import com.dkarakaya.songify.adapter.VideoPostAdapter
 import com.dkarakaya.songify.model.YoutubeDataModel
 import com.dkarakaya.songify.util.OnItemClickListener
+import com.dkarakaya.songify.util.showKeyboard
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
@@ -37,7 +36,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.*
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(R.layout.fragment_search) {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VideoPostAdapter
     private lateinit var data: ArrayList<YoutubeDataModel>
@@ -46,25 +45,30 @@ class SearchFragment : Fragment() {
     private lateinit var textViewSearch: TextView
     private lateinit var editTextSearch: EditText
     private lateinit var btnSearch: ImageButton
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_search, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         checkUserPermission()
+
         render(view)
         btnSearch.setOnClickListener {
-            val query = editTextSearch.text.toString().replace(" ", "+")
-            videoUrl = URL + query
-            mainLayout.visibility = View.VISIBLE
+            prepareLinkFromQuery()
 
             RequestYoutubeAPI().execute()
+
         }
-        return view
+    }
+
+    private fun prepareLinkFromQuery() {
+        val query = editTextSearch.text.toString().replace(" ", "+")
+        videoUrl = URL + query
     }
 
     private fun render(view: View) {
         textViewSearch = view.findViewById(R.id.tvSearch)
         textViewSearch.visibility = View.VISIBLE
         editTextSearch = view.findViewById(R.id.edtSearch)
+        editTextSearch.showKeyboard()
         mainLayout = view.findViewById(R.id.main_layout)
         mainProgressBar = view.findViewById(R.id.prgrBar)
         mainLayout.visibility = View.GONE
