@@ -1,4 +1,4 @@
-package com.dkarakaya.songify.util
+package com.dkarakaya.songify.mediaplayer
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -22,7 +22,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.dkarakaya.songify.MainActivity
-import com.dkarakaya.songify.MainActivity.Companion.setCurSongDetails
 import com.dkarakaya.songify.R
 import com.dkarakaya.songify.model.SongInfo
 
@@ -32,35 +31,46 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
     private val musicBinder = MusicBinder()
 
     //media player
-    private lateinit var player: MediaPlayer
+    private var player: MediaPlayer? = null
 
     //song list
     private var songs: MutableList<SongInfo>? = null
 
     //current position
-    private var songPosition = 0
-    private var playingSong: SongInfo? = null
+    private var playingSongPosition = 0
+    var playingSong: SongInfo? = null
 
     override fun onCreate() {
         //create the service
         super.onCreate()
-
-        //initialize position
-        songPosition = 0
-
-        //create player
-        player = MediaPlayer()
-        mediaSession = MediaSessionCompat(applicationContext, MEDIA_SESSION_TAG)
-
-        applyFilterToReceiver()
-
+        playingSongPosition = 0
         initMusicPlayer()
+    }
+
+    /**
+     *Sets player properties
+     */
+    private fun initMusicPlayer() {
+        //create player
+        if (player == null) {
+            player = MediaPlayer()
+        }
+        applyFilterToReceiver()
+        mediaSession = MediaSessionCompat(applicationContext, MEDIA_SESSION_TAG)
+        player?.apply {
+            setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
+            setAudioStreamType(AudioManager.STREAM_MUSIC)
+            setOnPreparedListener(this@MusicService)
+            setOnCompletionListener(this@MusicService)
+            setOnErrorListener(this@MusicService)
+        }
     }
 
     private fun applyFilterToReceiver() {
         val filter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
-        registerReceiver(noisyReceiver, filter)
         val filterHeadphoneButton = IntentFilter(Intent.ACTION_MEDIA_BUTTON)
+
+        registerReceiver(noisyReceiver, filter)
         registerReceiver(headphoneButton, filterHeadphoneButton)
     }
 
@@ -75,21 +85,12 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
 
     override fun onDestroy() {
         stopForeground(true)
-
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancel(NOTIFY_ID)
-
         unregisterReceiver(noisyReceiver)
         unregisterReceiver(headphoneButton)
-    }
-
-    private fun initMusicPlayer() {
-        //set player properties
-        player.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC)
-        player.setOnPreparedListener(this)
-        player.setOnCompletionListener(this)
-        player.setOnErrorListener(this)
+        mediaSession?.release()
+        player?.release()
     }
 
     fun setList(songs: MutableList<SongInfo>) {
@@ -102,22 +103,27 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
     }
 
     fun playSong() {
-        //play song
-        player.reset()
-        //get song
-        val playSong = songs!![songPosition]
-        playingSong = playSong
-        try {
-            player.setDataSource(playSong.songUrl)
-        } catch (e: Exception) {
-            Log.e("MUSIC SERVICE", "Error setting data source", e)
+        player?.apply {
+            reset()
+            //get song
+            try {
+                playingSong = songs!![playingSongPosition]
+                setDataSource(playingSong!!.songUrl)
+            } catch (e: Exception) {
+                Log.e("MUSIC SERVICE", "Error setting data source", e)
+            }
+            prepareAsync()
         }
-        player.prepareAsync()
     }
 
     override fun onPrepared(mediaPlayer: MediaPlayer) {
         //start playback
         mediaPlayer.start()
+//        setCurSongDetails(playingSong!!.songTitle, playingSong!!.artistName)
+//        createNotification()
+    }
+
+    private fun createNotification() {
         val notIntent = Intent(this, MainActivity::class.java)
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendInt = PendingIntent.getActivity(this, 0,
@@ -142,12 +148,11 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build()
         startForeground(NOTIFY_ID, notification)
-        setCurSongDetails(playingSong!!.songTitle, playingSong!!.artistName)
     }
 
     private val noisyReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (player.isPlaying) {
+            if (player!!.isPlaying) {
                 pausePlayer()
             }
         }
@@ -155,54 +160,54 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
 
     private val headphoneButton: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (player.isPlaying) {
+            if (player!!.isPlaying) {
                 pausePlayer()
-            } else if (!player.isPlaying) {
+            } else {
                 go()
             }
         }
     }
 
     fun setSong(songIndex: Int) {
-        songPosition = songIndex
+        playingSongPosition = songIndex
     }
 
     val position: Int
-        get() = player.currentPosition
+        get() = player!!.currentPosition
 
     val duration: Int
-        get() = player.duration
+        get() = player!!.duration
 
     val isPlaying: Boolean
-        get() = player.isPlaying
+        get() = player!!.isPlaying
 
     fun pausePlayer() {
-        player.pause()
+        player!!.pause()
     }
 
     fun seek(position: Int) {
-        player.seekTo(position)
+        player?.seekTo(position)
     }
 
     fun go() {
-        player.start()
+        player?.start()
     }
 
     fun playPrev() {
-        songPosition--
-        if (songPosition < 0) songPosition = songs!!.size - 1
+        playingSongPosition--
+        if (playingSongPosition < 0) playingSongPosition = songs!!.size - 1
         playSong()
     }
 
     //skip to next
     fun playNext() {
-        songPosition++
-        if (songPosition >= songs!!.size) songPosition = 0
+        playingSongPosition++
+        if (playingSongPosition >= songs!!.size) playingSongPosition = 0
         playSong()
     }
 
     override fun onCompletion(mp: MediaPlayer) {
-        if (player.currentPosition > 0) {
+        if (player!!.currentPosition > 0) {
             mp.reset()
             playNext()
         }
@@ -220,8 +225,11 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
     override fun onUnbind(intent: Intent): Boolean {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager!!.cancel(NOTIFY_ID)
-        player.stop()
-        player.release()
+        player?.apply {
+            stop()
+            reset()
+            release()
+        }
         return false
     }
 
