@@ -8,10 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : FragmentActivity() {
+class MainActivity : FragmentActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         render()
 
         //added this if statement to keep the selected fragment when rotating the device
@@ -28,10 +27,6 @@ class MainActivity : FragmentActivity() {
         lCurSongDetails.visibility = View.GONE
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.setOnNavigationItemSelectedListener(navListener)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     private val navListener: BottomNavigationView.OnNavigationItemSelectedListener =

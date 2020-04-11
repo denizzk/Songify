@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_weight="4.25" />
 
-
     <FrameLayout
         android:id="@+id/mediaController"
         android:layout_width="match_parent"

@@ -115,9 +115,9 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
         player.prepareAsync()
     }
 
-    override fun onPrepared(mp: MediaPlayer) {
+    override fun onPrepared(mediaPlayer: MediaPlayer) {
         //start playback
-        mp.start()
+        mediaPlayer.start()
         val notIntent = Intent(this, MainActivity::class.java)
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendInt = PendingIntent.getActivity(this, 0,
@@ -152,6 +152,7 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
             }
         }
     }
+
     private val headphoneButton: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (player.isPlaying) {
@@ -169,10 +170,10 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
     val position: Int
         get() = player.currentPosition
 
-    val dur: Int
+    val duration: Int
         get() = player.duration
 
-    val isPng: Boolean
+    val isPlaying: Boolean
         get() = player.isPlaying
 
     fun pausePlayer() {
