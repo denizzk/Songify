@@ -26,7 +26,6 @@ class CustomMediaController(context: Context) : MediaController(context), MediaC
                     setMediaPlayer(this)
                     isEnabled = true
                     alpha = .7f
-                    show(0)
                 }
             }
             return controller
@@ -39,14 +38,17 @@ class CustomMediaController(context: Context) : MediaController(context), MediaC
         super.hide()
     }
 
+    /**
+     * Connects to the service
+     */
     fun musicConnection(songList: MutableList<SongInfo>): ServiceConnection {
-        //connect to the service
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, binder: IBinder) {
                 bindMusicService(binder)
                 //pass list
                 musicService.setList(songList)
                 musicBound = true
+                show(0)
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
@@ -56,9 +58,9 @@ class CustomMediaController(context: Context) : MediaController(context), MediaC
     }
 
     fun bindMusicService(binder: IBinder) {
-        val binder = binder as MusicService.MusicBinder
+        val musicBinder = binder as MusicService.MusicBinder
         //get service
-        musicService = binder.service
+        musicService = musicBinder.service
     }
 
     fun songPicked(songPos: Int) {
@@ -93,19 +95,23 @@ class CustomMediaController(context: Context) : MediaController(context), MediaC
     }
 
     override fun getDuration(): Int {
-        return if (musicBound && musicService.isPlaying) musicService.duration else 0
+        return if (isBoundAndPlaying()) musicService.duration else 0
     }
 
     override fun getCurrentPosition(): Int {
-        return if (musicBound && musicService.isPlaying) musicService.position else 0
+        return if (isBoundAndPlaying()) musicService.position else 0
     }
+
+    private fun isBoundAndPlaying() = musicBound && musicService.isPlaying
 
     override fun seekTo(pos: Int) {
         musicService.seek(pos)
     }
 
     override fun isPlaying(): Boolean {
-        return if (musicBound) musicService.isPlaying else false
+        return if (musicBound) {
+            musicService.isPlaying
+        } else false
     }
 
     override fun getBufferPercentage(): Int {

@@ -85,6 +85,7 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
     override fun onStop() {
         super.onStop()
 //        controller.hideController()
+        requireContext().stopService(playIntent)
     }
 
     private fun initializePlayIntent() {
@@ -97,11 +98,7 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
     private fun setController() {
         controller = CustomMediaController.initMediaController(requireContext())
         controller.apply {
-//            setPrevNextListeners({ playNext() }) { playPrev() }
-//            setMediaPlayer(this@LibraryFragment)
-//            isEnabled = true
             setAnchorView(media_controller)
-//            alpha = .7f
         }
     }
 
