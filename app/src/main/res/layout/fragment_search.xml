@@ -8,7 +8,7 @@
     android:weightSum="5">
 
     <TextView
-        android:id="@+id/tvSearch"
+        android:id="@+id/search_text"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -20,60 +20,58 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="10sp"
         android:layout_weight=".5"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="5"
-        android:layout_marginBottom="10sp">
+        android:weightSum="5">
 
         <EditText
-            android:id="@+id/edtSearch"
+            android:id="@+id/search_edit"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
             android:background="?attr/selectedTextColor"
             android:hint="Artists, songs"
+            android:singleLine="true"
             android:textAlignment="center"
             android:textColor="?attr/cardbackground"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:singleLine="true"/>
+            android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/btnSearch"
+            android:id="@+id/search_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_weight=".5"
             android:background="?attr/selectedTextColor"
-            android:src="@drawable/ic_search"
-            android:layout_gravity="center"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"/>
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="@drawable/ic_search" />
 
     </LinearLayout>
 
-
     <LinearLayout
-            android:id="@+id/main_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight=".5">
-
-            <ProgressBar
-                android:id="@+id/prgrBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mList_videos"
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4.5"/>
+        android:layout_weight=".5"
+        android:gravity="center"
+        android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4.5" />
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.dkarakaya.songify
+package com.dkarakaya.songify.search
 
 import android.Manifest
 import android.app.DownloadManager
@@ -11,22 +11,18 @@ import android.os.Environment
 import android.util.Log
 import android.util.SparseArray
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
+import com.dkarakaya.songify.R
 import com.dkarakaya.songify.adapter.VideoPostAdapter
 import com.dkarakaya.songify.model.YoutubeDataModel
 import com.dkarakaya.songify.util.OnItemClickListener
 import com.dkarakaya.songify.util.showKeyboard
+import kotlinx.android.synthetic.main.fragment_search.*
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
@@ -37,43 +33,35 @@ import java.io.IOException
 import java.util.*
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
-    private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VideoPostAdapter
     private lateinit var data: ArrayList<YoutubeDataModel>
-    private lateinit var mainLayout: LinearLayout
-    private lateinit var mainProgressBar: ProgressBar
-    private lateinit var textViewSearch: TextView
-    private lateinit var editTextSearch: EditText
-    private lateinit var btnSearch: ImageButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        render()
         checkUserPermission()
-
-        render(view)
-        btnSearch.setOnClickListener {
+        search_button.setOnClickListener {
             prepareLinkFromQuery()
-
             RequestYoutubeAPI().execute()
         }
     }
 
     private fun prepareLinkFromQuery() {
-        val query = editTextSearch.text.toString().replace(" ", "+")
+        val query = search_edit.text.toString().replace(" ", "+")
         videoUrl = URL + query
     }
 
-    private fun render(view: View) {
-        textViewSearch = view.findViewById(R.id.tvSearch)
-        textViewSearch.visibility = View.VISIBLE
-        editTextSearch = view.findViewById(R.id.edtSearch)
-        editTextSearch.showKeyboard()
-        mainLayout = view.findViewById(R.id.main_layout)
-        mainProgressBar = view.findViewById(R.id.prgrBar)
-        mainLayout.visibility = View.GONE
-        recyclerView = view.findViewById(R.id.mList_videos)
-        recyclerView.visibility = View.GONE
-        btnSearch = view.findViewById(R.id.btnSearch)
+    private fun render() {
+        search_text.visibility = View.VISIBLE
+
+        main_layout.visibility = View.GONE
+        recycler_view.visibility = View.GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        search_edit.requestFocus()
+        search_edit.showKeyboard()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -94,10 +82,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun initList(data: ArrayList<YoutubeDataModel>) {
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        textViewSearch.visibility = View.GONE
-        mainLayout.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        search_text.visibility = View.GONE
+        main_layout.visibility = View.GONE
+        recycler_view.visibility = View.VISIBLE
 
         adapter = VideoPostAdapter(data, object : OnItemClickListener {
             override fun onItemClick(item: YoutubeDataModel?) {
@@ -106,7 +94,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 getYoutubeDownloadUrl(requireNotNull(youtubeLink), item?.title)
             }
         })
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
     }
 
     private fun getYoutubeDownloadUrl(youtubeLink: String, videoTitle: String?) {

@@ -3,6 +3,7 @@ package com.dkarakaya.songify
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.dkarakaya.songify.search.SearchFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : FragmentActivity(R.layout.activity_main) {
