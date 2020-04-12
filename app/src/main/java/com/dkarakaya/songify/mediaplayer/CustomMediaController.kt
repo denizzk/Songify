@@ -67,7 +67,7 @@ class CustomMediaController(context: Context) : MediaController(context), MediaC
         musicService.setSong(songPos)
         musicService.playSong()
         if (playbackPaused) {
-            playbackPaused = true
+            playbackPaused = false
         }
     }
 

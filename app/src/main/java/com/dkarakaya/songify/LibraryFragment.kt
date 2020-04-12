@@ -35,7 +35,6 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
 
     private fun render() {
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
-
         setController()
         songAdapter = SongAdapter(requireContext(), songList)
         songAdapter.setOnItemClickListener(object : SongAdapter.OnItemClickListener {
