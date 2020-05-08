@@ -101,29 +101,39 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
 
     private fun loadSongs() {
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val audioType = "${MediaStore.Audio.Media.MIME_TYPE} == 'audio/mp4'"
+        val audioType = "${MediaStore.Audio.Media.MIME_TYPE} == 'audio/mp4' OR ${MediaStore.Audio.Media.MIME_TYPE} == 'audio/mpeg'"
         val selection = "${MediaStore.Audio.Media.IS_MUSIC}!=0 AND $audioType AND ${MediaStore.Audio.Media.DATA} LIKE '%music%'"
-        val cursor = requireContext().contentResolver.query(uri, null, selection, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    var name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-//                    name += cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE))
-                    val url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    var duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    val s = name.split("-").toTypedArray()
-                    if (s.size == 2) name = s[1].trim { it <= ' ' }
-                    val artist = s[0].trim { it <= ' ' }
-                    val d = duration.toInt() / 1000
-                    val min = d / 60
-                    val sec = d % 60
-                    duration = String.format("%02d:%02d", min, sec)
-                    val songInfo = SongInfo(name, artist, url, duration)
-                    songList.add(songInfo)
-                } while (cursor.moveToNext())
+        val sortOrder = "${MediaStore.Audio.Media.DATE_MODIFIED} ASC"
+        val cursor = requireContext().contentResolver.query(uri, null, selection, null, sortOrder)
+        cursor?.use {
+            while (cursor.moveToNext()) {
+                var title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                var artist: String? = null
+                val url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                val duration = formatDuration(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)))
+
+                val array = title.split("-").toTypedArray()
+                if (array.size == 2) {
+                    title = formatTitle(array)[1]
+                    artist = formatTitle(array)[0]
+                }
+                val songInfo = SongInfo(title, artist, url, duration)
+                songList.add(songInfo)
             }
-            cursor.close()
-            songAdapter = SongAdapter(requireContext(), songList)
         }
+        songAdapter = SongAdapter(requireContext(), songList)
+    }
+
+    private fun formatDuration(duration: String): String {
+        val d = duration.toInt() / 1000
+        val min = d / 60
+        val sec = d % 60
+        return String.format("%02d:%02d", min, sec)
+    }
+
+    private fun formatTitle(array: Array<String>): Array<String> {
+        array[1].trim { it <= ' ' }
+        array[0].trim { it <= ' ' }
+        return array
     }
 }
