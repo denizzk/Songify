@@ -19,12 +19,12 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.dkarakaya.songify.MainActivity
 import com.dkarakaya.songify.MainActivity.Companion.setPlayingSongDetails
 import com.dkarakaya.songify.R
 import com.dkarakaya.songify.model.SongInfo
+import timber.log.Timber
 
 class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener, OnCompletionListener {
     private lateinit var notificationManager: NotificationManager
@@ -112,7 +112,7 @@ class MusicService : Service(), OnPreparedListener, MediaPlayer.OnErrorListener,
                 playingSong = songs[playingSongPosition]
                 setDataSource(playingSong.songUrl)
             } catch (e: Exception) {
-                Log.e("MUSIC SERVICE", "Error setting data source", e)
+                Timber.e(e, "Error setting data source")
             }
             prepareAsync()
         }

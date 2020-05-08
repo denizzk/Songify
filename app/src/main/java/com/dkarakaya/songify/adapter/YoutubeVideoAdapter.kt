@@ -7,30 +7,29 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dkarakaya.songify.R
-import com.dkarakaya.songify.adapter.VideoPostAdapter.YoutubePostHolder
-import com.dkarakaya.songify.model.YoutubeDataModel
+import com.dkarakaya.songify.adapter.YoutubeVideoAdapter.YoutubePostHolder
+import com.dkarakaya.songify.model.YoutubeVideoModel
 import com.dkarakaya.songify.util.OnItemClickListener
 import com.squareup.picasso.Picasso
 import java.util.*
 
-class VideoPostAdapter internal constructor(private val dataSet: ArrayList<YoutubeDataModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<YoutubePostHolder>() {
+class YoutubeVideoAdapter internal constructor(private val videoSet: ArrayList<YoutubeVideoModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<YoutubePostHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YoutubePostHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.youtube_post, parent, false)
         return YoutubePostHolder(view)
     }
 
     override fun onBindViewHolder(holder: YoutubePostHolder, position: Int) {
-        //set the views here
         val textViewTitle = holder.textViewTitle
         val textViewChannelTitle = holder.textViewChannelTitle
         val textViewDate = holder.textViewDate
         val imageView = holder.imageView
 
-        val (title, channelTitle, publishedAt, thumbnail) = dataSet[position]
+        val (title, channelTitle, publishedAt, thumbnail) = videoSet[position]
         textViewTitle.text = title
         textViewChannelTitle.text = channelTitle
         textViewDate.text = publishedAt
-        holder.bind(dataSet[position], listener)
+        holder.bind(videoSet[position], listener)
 
         //TODO: image will be downloaded from url
         Picasso.get()
@@ -39,7 +38,7 @@ class VideoPostAdapter internal constructor(private val dataSet: ArrayList<Youtu
     }
 
     override fun getItemCount(): Int {
-        return dataSet.size
+        return videoSet.size
     }
 
     class YoutubePostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -48,7 +47,7 @@ class VideoPostAdapter internal constructor(private val dataSet: ArrayList<Youtu
         var textViewDate: TextView = itemView.findViewById(R.id.textViewDate)
         var imageView: ImageView = itemView.findViewById(R.id.ImageThumb)
 
-        fun bind(item: YoutubeDataModel, listener: OnItemClickListener) {
+        fun bind(item: YoutubeVideoModel, listener: OnItemClickListener) {
             itemView.setOnClickListener { listener.onItemClick(item) }
         }
     }
