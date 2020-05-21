@@ -8,12 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dkarakaya.songify.R
 import com.dkarakaya.songify.adapter.YoutubeVideoAdapter.YoutubePostHolder
-import com.dkarakaya.songify.model.YoutubeVideoModel
+import com.dkarakaya.songify.model.YoutubeItem
 import com.dkarakaya.songify.util.OnItemClickListener
 import com.squareup.picasso.Picasso
 import java.util.*
 
-class YoutubeVideoAdapter internal constructor(private val videoSet: ArrayList<YoutubeVideoModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<YoutubePostHolder>() {
+class YoutubeVideoAdapter internal constructor(private val videoSet: ArrayList<YoutubeItem>, private val listener: OnItemClickListener) : RecyclerView.Adapter<YoutubePostHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YoutubePostHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.youtube_post, parent, false)
         return YoutubePostHolder(view)
@@ -47,7 +47,7 @@ class YoutubeVideoAdapter internal constructor(private val videoSet: ArrayList<Y
         var textViewDate: TextView = itemView.findViewById(R.id.textViewDate)
         var imageView: ImageView = itemView.findViewById(R.id.ImageThumb)
 
-        fun bind(item: YoutubeVideoModel, listener: OnItemClickListener) {
+        fun bind(item: YoutubeItem, listener: OnItemClickListener) {
             itemView.setOnClickListener { listener.onItemClick(item) }
         }
     }

@@ -1,7 +1,7 @@
 package com.dkarakaya.songify.util
 
-import com.dkarakaya.songify.model.YoutubeVideoModel
+import com.dkarakaya.songify.model.YoutubeItem
 
 interface OnItemClickListener {
-    fun onItemClick(item: YoutubeVideoModel?)
+    fun onItemClick(item: YoutubeItem?)
 }

@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dkarakaya.songify.R
 import com.dkarakaya.songify.adapter.YoutubeVideoAdapter
-import com.dkarakaya.songify.model.YoutubeVideoModel
+import com.dkarakaya.songify.model.YoutubeItem
 import com.dkarakaya.songify.util.OnItemClickListener
 import com.dkarakaya.songify.util.REQUEST_EXTERNAL_STORAGE
 import com.dkarakaya.songify.util.toggleKeyboard
@@ -41,7 +41,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val disposable = CompositeDisposable()
 
     private lateinit var adapter: YoutubeVideoAdapter
-    private lateinit var data: ArrayList<YoutubeVideoModel>
+    private lateinit var data: ArrayList<YoutubeItem>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -111,12 +111,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         downloadManager.enqueue(request)
     }
 
-    //create an asynctask to get the data from youtube
+    //create an async task to get the data from youtube
     private inner class RequestYoutubeAPI : AsyncTask<Void?, String?, String?>() {
-        override fun onPreExecute() {
-            super.onPreExecute()
-        }
-
         override fun doInBackground(vararg params: Void?): String? {
             val httpClient = HttpClientBuilder.create().build()
             val httpGet = HttpGet(videoUrl)
@@ -145,8 +141,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
         }
 
-        fun parseVideoListFromResponse(jsonObject: JSONObject): ArrayList<YoutubeVideoModel> {
-            val videoList = ArrayList<YoutubeVideoModel>()
+        fun parseVideoListFromResponse(jsonObject: JSONObject): ArrayList<YoutubeItem> {
+            val videoList = ArrayList<YoutubeItem>()
             if (jsonObject.has("items")) {
                 try {
                     val jsonArray = jsonObject.getJSONArray("items")
@@ -154,9 +150,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                         val json = jsonArray.getJSONObject(i)
                         if (json.has("id")) {
                             val jsonID = json.getJSONObject("id")
-                            lateinit var video_id: String
+                            lateinit var videoId: String
                             if (jsonID.has("videoId")) {
-                                video_id = jsonID.getString("videoId")
+                                videoId = jsonID.getString("videoId")
                             }
                             if (jsonID.has("kind")) {
                                 if (jsonID.getString("kind") == "youtube#video") {
@@ -166,12 +162,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                                     val publishedAt = jsonSnippet.getString("publishedAt")
                                     val thumbnail = jsonSnippet.getJSONObject("thumbnails")
                                             .getJSONObject("medium").getString("url")
-                                    val youtubeObject = YoutubeVideoModel(title, channelTitle, publishedAt, thumbnail, video_id)
+                                    val youtubeObject = YoutubeItem(title, channelTitle, publishedAt, thumbnail, videoId)
                                     youtubeObject.title = title
                                     youtubeObject.channelTitle = channelTitle
                                     youtubeObject.publishedAt = publishedAt
                                     youtubeObject.thumbnail = thumbnail
-                                    youtubeObject.videoId = video_id
+                                    youtubeObject.videoId = videoId
                                     videoList.add(youtubeObject)
                                 }
                             }
@@ -185,14 +181,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    private fun initList(data: ArrayList<YoutubeVideoModel>) {
+    private fun initList(data: ArrayList<YoutubeItem>) {
         recycler_view.layoutManager = LinearLayoutManager(requireContext())
         search_text.visibility = View.GONE
         main_layout.visibility = View.GONE
         recycler_view.visibility = View.VISIBLE
 
         adapter = YoutubeVideoAdapter(data, object : OnItemClickListener {
-            override fun onItemClick(item: YoutubeVideoModel?) {
+            override fun onItemClick(item: YoutubeItem?) {
                 videoId = item?.videoId!!
 //                getYoutubeDownloadUrl(youtubeLink, item.title!!)
                 viewModel.videoId(videoId)

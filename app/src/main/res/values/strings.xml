@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Songify</string>
-    <string name="error_no_yt_link">Not a valid YouTube link!</string>
+    <string name="placeholder"> - </string>
+    <string name="my_library">My Library</string>
+    <string name="search">Search</string>
+    <string name="artists_songs">Artists, songs</string>
+    <string name="song_name">DNA</string>
+    <string name="song_artist">Kendrick Lamar</string>
+    <string name="song_duration">3:14</string>
 </resources>

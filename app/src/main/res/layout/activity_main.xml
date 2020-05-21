@@ -35,22 +35,22 @@
             android:maxLength="33"
             android:textColor="?attr/selectedTextColor"
             android:textSize="16sp"
-            tools:text="Zombi" />
+            tools:text="@string/song_name" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" - "
-            android:textColor="?attr/textcolor"
+            android:text="@string/placeholder"
+            android:textColor="?attr/textColor"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/cur_song_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textcolor"
+            android:textColor="?attr/textColor"
             android:textSize="14sp"
-            tools:text="Adamlar" />
+            tools:text="@string/song_artist" />
 
     </LinearLayout>
 
@@ -59,9 +59,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?attr/cardbackground"
+        android:background="?attr/cardBackground"
         app:itemIconTint="@drawable/bottom_nav_icon_color_selector"
-        app:itemTextAppearanceInactive="?attr/textcolor"
+        app:itemTextAppearanceInactive="?attr/textColor"
         app:itemTextColor="@drawable/bottom_nav_icon_color_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

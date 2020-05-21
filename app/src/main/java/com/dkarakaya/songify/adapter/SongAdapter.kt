@@ -44,17 +44,11 @@ class SongAdapter(private val context: Context, private val _songs: MutableList<
     }
 
     inner class SongHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var tvSongName: TextView
-        var tvSongArtist: TextView
-        var tvSongDuration: TextView
-        var cvPlay: CardView
+        var tvSongName: TextView = itemView.findViewById(R.id.tvSongName)
+        var tvSongArtist: TextView = itemView.findViewById(R.id.tvArtistName)
+        var tvSongDuration: TextView = itemView.findViewById(R.id.tvSongDuration)
+        var cvPlay: CardView = itemView.findViewById(R.id.cvPlay)
 
-        init {
-            tvSongName = itemView.findViewById(R.id.tvSongName)
-            tvSongArtist = itemView.findViewById(R.id.tvArtistName)
-            tvSongDuration = itemView.findViewById(R.id.tvSongDuration)
-            cvPlay = itemView.findViewById(R.id.cvPlay)
-        }
     }
 
 }
