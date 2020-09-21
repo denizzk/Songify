@@ -81,7 +81,7 @@ dependencies {
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     //new youtube extractor
-    implementation 'com.github.Commit451:YouTubeExtractor:6.0.0'
+    implementation 'com.github.Commit451:YouTubeExtractor:6.0.1'
 
     //image
     implementation 'com.squareup.picasso:picasso:2.71828'
